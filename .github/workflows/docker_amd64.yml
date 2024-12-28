@@ -30,7 +30,7 @@ jobs:
         # Toolset can create docker images in foreign distro bases so lets do it
         ./envsetup --imgsys-amd64
     - name: Login to docker.io
-      uses: docker/login-action@v1
+      uses: docker/login-action@v3
       with:
         username: zraxyl
         password: ${{ secrets.DOCKER_TOKEN }}
