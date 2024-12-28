@@ -1,0 +1,40 @@
+name: Zraxyl docker image - AMD64
+
+on:
+    schedule:
+        - cron: '0 0 * * *'
+    workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - name: prepare build env
+      run: |
+        # Basics
+        mkdir -p ~/ZRAXYL
+        cd ~/ZRAXYL
+
+        git clone https://github.com/Zraxyl/build_toolset.git build/toolset
+        git clone https://github.com/Zraxyl/build_docker_developing.git build/docker/developing
+
+        ln -sf build/toolset/envsetup.sh envsetup
+
+    - name: Setup bootstrap environment
+      run: |
+        cd ~/ZRAXYL
+        export P_ROOT=$(pwd)
+
+        # Toolset can create docker images in foreign distro bases so lets do it
+        ./envsetup --imgsys-amd64
+    - name: Login to docker.io
+      uses: docker/login-action@v1
+      with:
+        username: zraxyl
+        password: ${{ secrets.DOCKER_TOKEN }}
+
+    - name: Push docker image
+      run: |
+        docker image push zraxyl/zraxyl:amd64
