@@ -1,0 +1,39 @@
+name: Zraxyl live iso - AMD64
+
+on:
+    schedule:
+        - cron: '0 0 * * *'
+    workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - name: prepare build env
+      run: |
+        # Basics
+        mkdir -p ~/ZRAXYL
+        cd ~/ZRAXYL
+
+        git clone https://github.com/Zraxyl/build_toolset.git build/toolset
+        git clone https://github.com/Zraxyl/build_docker_developing.git build/docker/developing
+
+        ln -sf build/toolset/envsetup.sh envsetup
+
+        # Lets also skip some zraxyl specific steps
+        mkdir -p out/checks
+        touch out/checks/is_checked
+    - name: Create ISO
+      run: |
+        cd ~/ZRAXYL
+        export P_ROOT=$(pwd)
+
+        # Toolset can create docker images in foreign distro bases so lets do it
+        ./envsetup --mkiso
+    - name: Upload iso
+      uses: actions/upload-artifact@v4
+      with:
+        name: zraxyl-nightly
+        path: ~/ZRAXYL/zraxyl.iso
