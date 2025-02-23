@@ -9,4 +9,4 @@
 
 #### ISO's
 
-* TODO
+[![Zraxyl live iso - AMD64](https://github.com/Zraxyl/workflows/actions/workflows/iso_amd64.yml/badge.svg)](https://github.com/Zraxyl/workflows/actions/workflows/iso_amd64.yml)
